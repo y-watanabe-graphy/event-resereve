@@ -1,0 +1,72 @@
+// lib/store.ts
+export type EventDate = {
+  id: string
+  date: string
+  time: string
+  venue: string
+  capacity: number
+  booked: number
+}
+
+export type Event = {
+  id: string
+  name: string
+  description: string
+  dates: EventDate[]
+  createdAt: string
+}
+
+export type Reservation = {
+  id: string
+  name: string; kana: string; university: string; graduationYear: string
+  phone: string; email: string
+  eventId: string; eventName: string
+  dateId: string; dateLabel: string; venue: string
+  reservedAt: string
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __store: { events: Event[]; reservations: Reservation[] } | undefined
+}
+
+function initStore() {
+  return {
+    events: [
+      {
+        id: 'ev-demo-1',
+        name: '会社説明会',
+        description: '当社の事業内容・社風・働き方についてご紹介します。',
+        createdAt: new Date().toISOString(),
+        dates: [
+          { id: 'dt-101', date: '2025-07-10', time: '10:00', venue: 'オンライン（Zoom）', capacity: 50, booked: 12 },
+          { id: 'dt-102', date: '2025-07-17', time: '14:00', venue: '本社会議室（東京）', capacity: 30, booked: 5 },
+        ],
+      },
+      {
+        id: 'ev-demo-2',
+        name: '1dayインターンシップ',
+        description: '実際の業務を体験できる1日インターンです。',
+        createdAt: new Date().toISOString(),
+        dates: [
+          { id: 'dt-201', date: '2025-08-05', time: '09:00', venue: '本社（東京）', capacity: 20, booked: 8 },
+        ],
+      },
+    ] as Event[],
+    reservations: [] as Reservation[],
+  }
+}
+
+export function getStore() {
+  if (!global.__store) global.__store = initStore()
+  return global.__store
+}
+
+export function generateId(prefix: string) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+}
+
+export function fmtDate(dateStr: string) {
+  const [y, m, d] = dateStr.split('-')
+  return `${y}年${parseInt(m)}月${parseInt(d)}日`
+}

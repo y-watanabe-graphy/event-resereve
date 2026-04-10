@@ -1,0 +1,15 @@
+# =============================================
+# .env.local.example
+# このファイルを .env.local にコピーして使用
+# Vercel にも同じ値を Environment Variables として登録してください
+# =============================================
+
+# 管理者パスワード（自由に変更可能）
+ADMIN_PASSWORD=admin1234
+
+# JWT署名用シークレット（長いランダム文字列）
+# 生成: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+JWT_SECRET=change-this-to-a-long-random-string
+
+# Google Apps Script の URL（STEP 1 で取得）
+GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/xxxxxxxxxx/exec

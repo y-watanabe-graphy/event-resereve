@@ -1,0 +1,63 @@
+// ========================================================
+// Google Apps Script コード
+// ※ エディタの「▶ 実行」ボタンは押さないでください
+//   「デプロイ」だけ行えばOKです
+// ========================================================
+
+var SHEET_NAME = '予約一覧';
+
+// ブラウザで直接URLを開いたときの応答（動作確認用）
+function doGet() {
+  return ContentService
+    .createTextOutput('✅ 予約システムのApps Scriptは正常に動作しています。')
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+// 予約フォームから送信されたデータを受け取る
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+
+    // シートがなければ作成
+    if (!sheet) {
+      sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(SHEET_NAME);
+    }
+
+    // 1行目が空ならヘッダーを追加
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        '氏名', 'フリガナ', '大学名', '年卒',
+        '電話番号', 'メールアドレス',
+        'イベント', '日程', '会場', '予約日時'
+      ]);
+      var header = sheet.getRange(1, 1, 1, 10);
+      header.setBackground('#1a1a1a');
+      header.setFontColor('#ffffff');
+      header.setFontWeight('bold');
+    }
+
+    // 予約データを追記
+    sheet.appendRow([
+      data.name,
+      data.kana,
+      data.university,
+      data.graduationYear,
+      data.phone,
+      data.email,
+      data.eventName,
+      data.dateLabel,
+      data.venue,
+      data.reservedAt,
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'success' }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'error', message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
